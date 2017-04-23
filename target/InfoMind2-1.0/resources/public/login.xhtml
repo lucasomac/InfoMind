@@ -1,0 +1,43 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>InfoMind</title>
+        <!--                Última versão CSS compilada e minificada -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+
+        <!--                Tema opcional -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" />
+
+        <!--                Última versão JavaScript compilada e minificada -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <link rel="shortcut icon" type="image/png" href="images/ico.png" />
+    </h:head>
+    <h:body>
+        <h:form>
+            <p:panel>
+                <h1 class="h1 text-uppercase text-center"><p:outputLabel value="LOGIN"/></h1>
+            </p:panel>
+            <p:panel>
+                <p:messages id="messages" />
+                <div align="center">
+                    <p:panelGrid columns="2">
+                        <p:outputLabel for="nomeUsuario" value="Nome Usuário:" />
+                        <p:inputText id="nomeUsuario" value="" />
+                        <p:outputLabel for="senha" value="Senha:" />
+                        <p:password id="senha" value="" />
+                        <f:facet name="footer" class="panel-footer">
+                            <div class="text-center">
+                                <p:commandButton value="Enviar" icon="ui-icon-star" ajax="false"/>
+                            </div>
+                        </f:facet>
+                    </p:panelGrid>
+                </div>
+            </p:panel>
+        </h:form>
+    </h:body>
+</html>
+

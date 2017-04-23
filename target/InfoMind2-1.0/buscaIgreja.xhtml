@@ -1,0 +1,153 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    template= "/resources/public/template.xhtml">
+    <ui:define name="centro">
+        <h:form id="formIgrejaPanel">
+            <p:panel>
+                <p:outputLabel for="estadoBusca" value="ESTADO" />
+                <p:selectOneMenu id="estadoBusca" value="#{igrejaBean.estadoBusca}">
+                    <f:selectItem itemLabel="AC" itemValue="AC" />
+                    <f:selectItem itemLabel="AL" itemValue="AL" />
+                    <f:selectItem itemLabel="AM" itemValue="AM" />
+                    <f:selectItem itemLabel="AP" itemValue="AP" />
+                    <f:selectItem itemLabel="BA" itemValue="BA" />
+                    <f:selectItem itemLabel="CE" itemValue="CE" />
+                    <f:selectItem itemLabel="DF" itemValue="DF" />
+                    <f:selectItem itemLabel="ES" itemValue="ES" />
+                    <f:selectItem itemLabel="GO" itemValue="GO" />
+                    <f:selectItem itemLabel="MA" itemValue="MA" />
+                    <f:selectItem itemLabel="MG" itemValue="MG" />
+                    <f:selectItem itemLabel="MS" itemValue="MS" />
+                    <f:selectItem itemLabel="MT" itemValue="MT" />
+                    <f:selectItem itemLabel="PA" itemValue="PA" />
+                    <f:selectItem itemLabel="PB" itemValue="PB" />
+                    <f:selectItem itemLabel="PE" itemValue="PE" />
+                    <f:selectItem itemLabel="PI" itemValue="PI" />
+                    <f:selectItem itemLabel="PR" itemValue="PR" />
+                    <f:selectItem itemLabel="RJ" itemValue="RJ" />
+                    <f:selectItem itemLabel="RN" itemValue="RN" />
+                    <f:selectItem itemLabel="RO" itemValue="RO" />
+                    <f:selectItem itemLabel="RR" itemValue="RR" />
+                    <f:selectItem itemLabel="RS" itemValue="RS" />
+                    <f:selectItem itemLabel="SC" itemValue="SC" />
+                    <f:selectItem itemLabel="SE" itemValue="SE" />
+                    <f:selectItem itemLabel="SP" itemValue="SP" />
+                    <f:selectItem itemLabel="TO" itemValue="TO" />
+                </p:selectOneMenu>
+                <p:inputText id="cidadeBusca" value="#{igrejaBean.cidadeBusca}" placeholder="DIGITE A CIDADE"/>
+                <p:outputLabel for="stsBusca" value="ATIVIDADE"/>
+                <p:selectOneMenu id="stsBusca" value="#{igrejaBean.status}">
+                    <f:selectItem itemLabel="SIM" itemValue="SIM"/>
+                    <f:selectItem itemLabel="NÃO" itemValue="NÃO"/>
+                </p:selectOneMenu>
+                <p:commandButton value="BUSCAR" action="#{igrejaBean.consultar()}" update="igrejaPanel" ajax="true"/>
+                <p:button value="TODOS" href="buscaIgreja.xhtml" />
+            </p:panel>
+
+            <p:panel header="LISTA DE IGREJAS" style="text-align: center" id="igrejaPanel">
+                <p:outputPanel>
+                    <p:dataTable id="igrejas" value="#{igrejaBean.igrejas}" var="igreja" emptyMessage="NENHUMA IGREJA ENCONTRADA!" resizableColumns="false"
+                                 rows="10" paginator="true" selection="#{igrejaBean.igrejaSelect}" selectionMode="single" rowKey="#{igreja.idIgreja}">
+                        <p:ajax event="rowSelect" update=":formEdicaoIgreja" />
+                        <p:column headerText="CÓDIGO" sortBy="#{igreja.idIgreja}">
+                            <h:outputText value="#{igreja.idIgreja}"/>
+                        </p:column>
+                        <p:column headerText="DATA ABERTURA" sortBy="#{igreja.dataAbertura}">
+                            <h:outputText value="#{igreja.dataAbertura}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="ENDEREÇO" sortBy="#{igreja.enderecoIgreja}" style="text-transform: uppercase">
+                            <h:outputText value="#{igreja.enderecoIgreja}"/>
+                        </p:column>
+                        <p:column headerText="BAIRRO" sortBy="#{igreja.bairroIgreja}" style="text-transform: uppercase">
+                            <h:outputText value="#{igreja.bairroIgreja}"/>
+                        </p:column>
+                        <p:column headerText="CIDADE" sortBy="#{igreja.cidadeIgreja}" style="text-transform: uppercase">
+                            <h:outputText value="#{igreja.cidadeIgreja}"/>
+                        </p:column>
+                        <p:column headerText="ESTADO" sortBy="#{igreja.estadoIgreja}">
+                            <h:outputText value="#{igreja.estadoIgreja}"/>
+                        </p:column>
+                        <p:column headerText="ATIVIDADE" sortBy="#{igreja.status}" style="text-transform: uppercase">
+                            <h:outputText value="#{igreja.status}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:button value="NOVO" icon="ui-icon-circle-plus" href="cadastroIgreja.xhtml"/>
+                    <p:commandButton value="EDITAR" icon="ui-icon-pencil" oncomplete="PF('editarDiag').show()" ajax="true" image="ui-icon-pencil" id="botaoEdita"/>
+                    <p:button value="VOLTAR" alt="Voltar a tela de listagem" href="index.xhtml"/>
+                </f:facet>
+            </p:panel>
+        </h:form>
+        <!--======================================================================================================================================================================-->
+        <h:form id="formEdicaoIgreja" prependId="false">
+            <p:dialog header="EDITAR IGREJA" id="diag" widgetVar="editarDiag" style="heigth:250px; width:250px;"
+                      modal="false" resizable="false" showEffect="slide" hideEffect="slide">
+                <p:growl id="growl" showDetail="false" sticky="true" />
+                <p:panelGrid columns="2" styleClass="table" id="gridIgreja" columnClasses="text-right">
+                    <f:facet name="header">
+                        IGREJA
+                    </f:facet>
+                    <p:outputLabel for="codigoIgreja" value="Codigo" />
+                    <p:inputText id="codigoIgreja" value="#{igrejaBean.igrejaSelect.idIgreja}"/>
+                    <p:outputLabel for="dataCriacaoIgreja" value="Data de Criação da Igreja:" /> 
+                    <p:calendar id="dataCriacaoIgreja" value="#{igrejaBean.igrejaSelect.dataAbertura}" locale="pt_BR" navigator="true" required="true"/>                                       
+                    <p:outputLabel for="enderecoIgreja" value="Endereço:" /> 
+                    <p:inputText id="enderecoIgreja" value="#{igrejaBean.igrejaSelect.enderecoIgreja}" required="true"/>     
+                    <p:outputLabel for="bairroIgreja" value="Bairro" />
+                    <p:inputText id="bairroIgreja" value="#{igrejaBean.igrejaSelect.bairroIgreja}" required="true"/>
+                    <p:outputLabel for="cidadeIgreja" value="Cidade:" /> 
+                    <p:inputText id="cidadeIgreja" value="#{igrejaBean.igrejaSelect.cidadeIgreja}" required="true"/>
+                    <p:outputLabel for="estadoIgreja" value="Estado:" /> 
+                    <p:selectOneMenu id="estadoIgreja" value="#{igrejaBean.igrejaSelect.estadoIgreja}" required="true">
+                        <f:selectItem itemLabel="SELECIONE A UF" itemValue="" />
+                        <f:selectItem itemLabel="AC" itemValue="AC" />
+                        <f:selectItem itemLabel="AL" itemValue="AL" />
+                        <f:selectItem itemLabel="AM" itemValue="AM" />
+                        <f:selectItem itemLabel="AP" itemValue="AP" />
+                        <f:selectItem itemLabel="BA" itemValue="BA" />
+                        <f:selectItem itemLabel="CE" itemValue="CE" />
+                        <f:selectItem itemLabel="DF" itemValue="DF" />
+                        <f:selectItem itemLabel="ES" itemValue="ES" />
+                        <f:selectItem itemLabel="GO" itemValue="GO" />
+                        <f:selectItem itemLabel="MA" itemValue="MA" />
+                        <f:selectItem itemLabel="MG" itemValue="MG" />
+                        <f:selectItem itemLabel="MS" itemValue="MS" />
+                        <f:selectItem itemLabel="MT" itemValue="MT" />
+                        <f:selectItem itemLabel="PA" itemValue="PA" />
+                        <f:selectItem itemLabel="PB" itemValue="PB" />
+                        <f:selectItem itemLabel="PE" itemValue="PE" />
+                        <f:selectItem itemLabel="PI" itemValue="PI" />
+                        <f:selectItem itemLabel="PR" itemValue="PR" />
+                        <f:selectItem itemLabel="RJ" itemValue="RJ" />
+                        <f:selectItem itemLabel="RN" itemValue="RN" />
+                        <f:selectItem itemLabel="RO" itemValue="RO" />
+                        <f:selectItem itemLabel="RR" itemValue="RR" />
+                        <f:selectItem itemLabel="RS" itemValue="RS" />
+                        <f:selectItem itemLabel="SC" itemValue="SC" />
+                        <f:selectItem itemLabel="SE" itemValue="SE" />
+                        <f:selectItem itemLabel="SP" itemValue="SP" />
+                        <f:selectItem itemLabel="TO" itemValue="TO" />
+                    </p:selectOneMenu>
+                    <f:facet name="footer" class="panel-footer">
+                        <div class="text-center">
+                            <p:commandButton  value="ALTERAR" action="#{igrejaBean.editar()}"
+                                              ajax="false" update="formIgrejaPanel" actionListener="#{growlView.editMessage()}" />
+                            <p:commandButton value="CANCELAR" ajax="true" onclick="PF('editarDiag').hide()"/>
+                        </div>
+                    </f:facet>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>

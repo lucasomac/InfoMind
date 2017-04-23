@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    template= "/resources/public/template.xhtml">
+    <ui:define name="centro">
+        <h:form id="formCargoPanel">
+            <p:panel>
+                <p:outputLabel for="nomeBusca" value="NOME"/>
+                <p:inputText id="nomeBusca" value="#{cargoBean.nome}"/>
+                <p:commandButton value="BUSCAR" action="#{cargoBean.consultar()}" update="cargoPanel" ajax="true"/>
+                <p:button value="TODOS" href="buscaCargo.xhtml" />
+            </p:panel>
+
+            <p:panel header="LISTA DE CARGOS" style="text-align: center" id="cargoPanel">
+                <p:outputPanel>
+                    <p:dataTable id="cargos" value="#{cargoBean.cargos}" var="cargo" emptyMessage="NENHUM CARGO ENCONTRADO!" resizableColumns="false"
+                                 rows="10" paginator="true" selection="#{cargoBean.cargoSelect}" selectionMode="single" rowKey="#{cargo.idCargo}">
+                        <p:ajax event="rowSelect" update=":formEdicaoCargo" />
+                        <p:column headerText="CÓDIGO" sortBy="#{cargo.idCargo}">
+                            <h:outputText value="#{cargo.idCargo}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="NOME" sortBy="#{cargo.nome}">
+                            <h:outputText value="#{cargo.nome}" style="text-transform: uppercase"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:button value="NOVO" icon="ui-icon-circle-plus" href="cadastroCargo.xhtml"/>
+                    <p:commandButton value="EDITAR" icon="ui-icon-pencil" onclick="PF('editarDiag').show()" image="ui-icon-pencil" id="botaoEdita"/>
+                    <p:button value="VOLTAR" alt="Voltar a tela de listagem" href="index.xhtml"/>
+                </f:facet>
+            </p:panel>
+        </h:form >
+
+        <h:form id="formEdicaoCargo">
+            <p:dialog header="EDITAR CARGO" id="diag" widgetVar="editarDiag"  showEffect="slide" hideEffect="slide"
+                      style="heigth:250px; width:250px;" modal="false" resizable="false">
+                <p:growl id="growl" showDetail="false" sticky="true"/>
+                <p:panelGrid columns="2" styleClass="table" id="gridCargo" columnClasses="text-right">
+                    <f:facet name="header">
+                        CARGO   
+                    </f:facet>
+                    <p:outputLabel for="idCargo" value="Código:" />
+                    <p:inputText id="idCargo" value="#{cargoBean.cargoSelect.idCargo}" readonly="false"/>
+                    <p:outputLabel for="nomeCargo" value="Nome:" />
+                    <p:inputText id="nomeCargo" value="#{cargoBean.cargoSelect.nome}" required="true"/>
+                    <f:facet name="footer" class="panel-footer">
+                        <div class="text-center">
+                            <p:commandButton  value="ALTERAR" action="#{cargoBean.editar()}" actionListener="#{growlView.editMessage()}"
+                                              ajax="false" update="formCargoPanel"/>
+                            <p:commandButton value="CANCELAR" ajax="true" onclick="PF('editarDiag').hide()" />
+                        </div>
+                    </f:facet>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>
+

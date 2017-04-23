@@ -1,0 +1,101 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition 
+    xmlns="http://www.w3.org/1999/xhtml"
+    xmlns:h="http://java.sun.com/jsf/html"
+    xmlns:f="http://java.sun.com/jsf/core"
+    xmlns:p="http://primefaces.org/ui"
+    xmlns:c="http://java.sun.com/jsp/jstl/core"
+    xmlns:ui="http://java.sun.com/jsf/facelets"
+    xmlns:fn="http://java.sun.com/jsp/jstl/functions"
+    template= "/resources/public/template.xhtml">
+    <ui:define name="centro">
+        <h:form id="formCultoPanel">
+            <p:panel>
+                <p:outputLabel for="dataBusca" value="DATA"/>
+                <p:calendar id="dataBusca" value="#{cultoBean.dataCelebracao}" navigator="true"/>
+                <p:outputLabel for="horarioBusca" value="HORÁRIO"/>
+                <p:calendar id="horarioBusca" value="#{cultoBean.horario}" pattern="HH:mm:ss" timeOnly="true"/>
+                <p:commandButton value="BUSCAR" action="#{cultoBean.consultar()}" update="cultoPanel" ajax="true"/>
+                <p:button value="TODOS" href="buscaCulto.xhtml" />
+            </p:panel>
+            <!--======================================================================================================================================================================-->
+            <p:panel header="LISTA DE CULTOS" style="text-align: center" id="cultoPanel">
+                <p:outputPanel>
+                    <p:dataTable id="cultos" value="#{cultoBean.cultos}" var="culto" emptyMessage="NENHUM CULTO ENCONTRADO!" resizableColumns="false"
+                                 rows="10" paginator="true" selection="#{cultoBean.cultoSelect}" selectionMode="single" rowKey="#{culto.idCulto}">
+                        <p:ajax event="rowSelect" update=":formEdicaoCulto"/>
+                        <p:column headerText="CÓDIGO" sortBy="#{culto.idCulto}">
+                            <h:outputText value="#{culto.idCulto}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="DATA DE REALIZAÇÃO" sortBy="#{culto.dataCelebracao}">
+                            <h:outputText value="#{culto.dataCelebracao}">
+                                <f:convertDateTime pattern="dd/MM/yyyy" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="QUANTIDADE DE MEMBROS" sortBy="#{culto.qtdMembro}">
+                            <h:outputText value="#{culto.qtdMembro}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="QUANTIDADE DE CONVERSÕES" sortBy="#{culto.qtdConversao}">
+                            <h:outputText value="#{culto.qtdConversao}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="QUANTIDADE DE VISITANTES" sortBy="#{culto.qtdVisitante}">
+                            <h:outputText value="#{culto.qtdVisitante}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="HORÁRIO DA CELEBRAÇÃO" sortBy="#{culto.horario}">
+                            <h:outputText value="#{culto.horario}">
+                                <f:convertDateTime pattern="HH:mm:ss" />
+                            </h:outputText>
+                        </p:column>
+                        <p:column headerText="DESCRIÇÃO" sortBy="#{culto.descricaoCulto}">
+                            <h:outputText value="#{culto.descricaoCulto}" style="text-transform: uppercase"/>
+                        </p:column>
+                        <p:column headerText="IGREJA" sortBy="#{culto.idIgrejaCulto}">
+                            <h:outputText value="#{culto.idIgrejaCulto}" style="text-transform: uppercase"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:outputPanel>
+                <f:facet name="footer">
+                    <p:button value="NOVO" icon="ui-icon-circle-plus" href="cadastroCulto.xhtml"/>
+                    <p:commandButton value="EDITAR" icon="ui-icon-pencil" image="ui-icon-pencil" id="botaoEdita" ajax="true" oncomplete="PF('editarDiag').show()"/>
+                    <p:button value="VOLTAR" alt="Voltar a tela de listagem" href="index.xhtml"/>
+                </f:facet>
+            </p:panel>
+        </h:form>
+        <!--======================================================================================================================================================================-->
+        <h:form id="formEdicaoCulto">
+            <p:dialog header="EDITAR CULTO" id="diag" widgetVar="editarDiag" style="heigth:250px; width:250px;"
+                      modal="false" resizable="false" showEffect="slide" hideEffect="slide">
+                <p:growl id="growl" showDetail="false" sticky="true" />
+                <p:panelGrid columns="2" styleClass="table" id="gridCulto" columnClasses="text-right">
+                    <f:facet name="header">
+                        CULTO
+                    </f:facet>
+                    <p:outputLabel for="dataCelebracao" value="Data da celebração:" />
+                    <p:calendar id="dataCelebracao" value="#{cultoBean.cultoSelect.dataCelebracao}" required="true"/>
+                    <p:outputLabel for="qtdMembro" value="Quantidade de membros presentes:"/>
+                    <p:inputText id="qtdMembro" value="#{cultoBean.cultoSelect.qtdMembro}" required="true"/>
+                    <p:outputLabel for="qtdVisita" value="Quantidade de membros visitantes:"/>
+                    <p:inputText id="qtdVisita" value="#{cultoBean.cultoSelect.qtdVisitante}" required="true"/>
+                    <p:outputLabel for="qtdConversao" value="Quantidade de conversões:"/>
+                    <p:inputText id="qtdConversao" value="#{cultoBean.cultoSelect.qtdConversao}" required="true"/>
+                    <p:outputLabel for="horario" value="Horário:" />
+                    <p:calendar id="horario" value="#{cultoBean.cultoSelect.horario}" pattern="HH:mm:ss" timeOnly="true" required="true"/>
+                    <p:outputLabel for="descricao" value="Descrição:" />
+                    <p:inputText id="descricao" value="#{cultoBean.cultoSelect.descricaoCulto}"/>
+                    <p:outputLabel for="igrejaCulto" value="Igreja:" />
+                    <p:selectOneMenu id="igrejaCulto" value="#{cultoBean.cultoSelect.idIgrejaCulto}" required="true" style="text-transform: uppercase">
+                        <f:selectItems value="#{cultoBean.igrejas}" var="igreja" itemLabel="#{igreja.cidadeIgreja}" itemValue="#{igreja}"/>
+                    </p:selectOneMenu>
+                    <f:facet name="footer" class="panel-footer">
+                        <div class="text-center">
+                            <p:commandButton  value="ALTERAR" action="#{cultoBean.editar()}"
+                                              ajax="false" update="formCultoPanel" actionListener="#{growlView.editMessage()}" />
+                            <p:commandButton value="CANCELAR" ajax="true" onclick="PF('editarDiag').hide()"/>
+                        </div>
+                    </f:facet>
+                </p:panelGrid>
+            </p:dialog>
+        </h:form>
+    </ui:define>
+</ui:composition>
